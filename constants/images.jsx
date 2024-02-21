@@ -29,9 +29,11 @@ const sushi = require("../assets/images/sushi.jpg");
 const teh_c_peng = require("../assets/images/teh-c-peng.jpg");
 const tomato_pasta = require("../assets/images/tomato-pasta.jpg");
 const pkFlag = require("../assets/images/pk-flag.png");
+const appLogo = require("../assets/images/logo.png");
 
 export default {
   pkFlag,
+  appLogo,
 
   avatar_1,
   avatar_2,

@@ -62,8 +62,9 @@ const Login = ({ navigation }) => {
         )
         if (res.status == 200) {
           ToastAndroid.show('Success', ToastAndroid.SHORT)
-          dispatch(authSuccessful(res.data.data.accessToken))
-          navigation.navigate('HomeTabs')
+          dispatch(authSuccessful(authToken))
+          // navigation.navigate('HomeTabs')
+          navigation.navigate('Main')
         }
       } catch (error) {
         console.log(error.response.data)
@@ -82,16 +83,18 @@ const Login = ({ navigation }) => {
       <View
         style={{
           marginTop: SIZES.padding * 5,
-          height: 100,
+          height: 25,
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
         <Image
-          source={images.pizza_restaurant}
+          source={images.appLogo}
           resizeMode="contain"
           style={{
-            width: "60%"
+            borderRadius: 25,
+            padding: 25,
+            backgroundColor: COLORS.primary
           }}
         />
       </View>
@@ -106,27 +109,25 @@ const Login = ({ navigation }) => {
           marginHorizontal: SIZES.padding * 3,
         }}
       >
-        <View style={{ marginTop: SIZES.padding * 2 }}>
+        {/* Email */}
+        <View style={{ marginTop: SIZES.padding * 1.5 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Email Address</Text>
-
-          <View style={{ flexDirection: 'row' }}>
-            <TextInput
-              style={{
-                flex: 1,
-                marginVertical: SIZES.padding,
-                borderBottomColor: COLORS.white,
-                borderBottomWidth: 1,
-                height: 40,
-                color: COLORS.white,
-                ...FONTS.body3
-              }}
-              placeholder="Email Address"
-              value={email}
-              onChangeText={text => setEmail(text)}
-              placeholderTextColor={COLORS.white}
-              selectionColor={COLORS.white}
-            />
-          </View>
+          <TextInput
+            style={{
+              marginVertical: SIZES.padding,
+              borderBottomColor: COLORS.primary,
+              borderBottomWidth: 1,
+              height: 40,
+              backgroundColor: COLORS.lightGray2,
+              color: COLORS.darkgray,
+              ...FONTS.body3
+            }}
+            selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.primary}
+            placeholder="Enter Email Address"
+            value={email}
+            onChangeText={text => setEmail(text)}
+          />
         </View>
 
         {/* Password */}
@@ -135,17 +136,18 @@ const Login = ({ navigation }) => {
           <TextInput
             style={{
               marginVertical: SIZES.padding,
-              borderBottomColor: COLORS.white,
+              borderBottomColor: COLORS.primary,
               borderBottomWidth: 1,
               height: 40,
-              color: COLORS.white,
+              backgroundColor: COLORS.lightGray2,
+              color: COLORS.darkgray,
               ...FONTS.body3
             }}
+            selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.primary}
             placeholder="Enter Password"
-            placeholderTextColor={COLORS.white}
             value={password}
             onChangeText={text => setPassword(text)}
-            selectionColor={COLORS.white}
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity
@@ -163,7 +165,7 @@ const Login = ({ navigation }) => {
               style={{
                 height: 20,
                 width: 20,
-                tintColor: COLORS.white
+                tintColor: COLORS.darkgray
               }}
             />
           </TouchableOpacity>
@@ -189,18 +191,20 @@ const Login = ({ navigation }) => {
             <Text style={{ color: COLORS.white }}>Login Now</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ margin: SIZES.padding * 3 }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
           <TouchableOpacity
             style={{
               height: 30,
-              backgroundColor: COLORS.gray,
-              borderRadius: SIZES.radius / 1.5,
+              width: 100,
+              borderColor: COLORS.darkgray,
+              borderWidth: 1,
+              borderRadius: 5,
               alignItems: 'center',
               justifyContent: 'center'
             }}
             onPress={() => navigation.navigate("SignUp")}
           >
-            <Text style={{ color: COLORS.black, ...FONTS.h3 }}>Signup</Text>
+            <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Signup</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -212,12 +216,8 @@ const Login = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ flex: 1 }}
     >
-      {/* <LinearGradient
-        colors={[COLORS.lime, COLORS.emerald]}
-        style={{ flex: 1 }}
-      > */}
       <View
-        style={{ flex: 1, backgroundColor: COLORS.secondary }}
+        style={{ flex: 1, backgroundColor: COLORS.lightGray4 }}
       >
         <ScrollView>
           {renderLogo()}

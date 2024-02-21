@@ -11,8 +11,11 @@ import {Provider} from 'react-redux';
 import {persistor, store} from './redux/store';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
 const Stack = createStackNavigator();
+
+const Drawer = createDrawerNavigator();
 
 const App = () => {
   return (
@@ -22,7 +25,8 @@ const App = () => {
           <Stack.Navigator initialRouteName={'Login'}>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen
+            <Stack.Screen name="Main" component={Main} />
+            {/* <Stack.Screen
               name="HomeTabs"
               component={Tabs}
               options={{headerShown: false}}
@@ -36,12 +40,25 @@ const App = () => {
               name="OrderDelivery"
               component={OrderDelivery}
               options={{headerShown: false}}
-            />
+            /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
     </Provider>
   );
 };
+
+const Main = () => (
+  <Drawer.Navigator initialRouteName="HomeTabs">
+    <Drawer.Screen
+      name="HomeTabs"
+      component={Tabs}
+      options={{headerShown: true}}
+    />
+    <Drawer.Screen name="Restaurant" component={Restaurant} />
+    <Drawer.Screen name="OrderDelivery" component={OrderDelivery} />
+    {/* Add more drawer screens if needed */}
+  </Drawer.Navigator>
+);
 
 export default App;

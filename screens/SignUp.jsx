@@ -51,16 +51,18 @@ const SignUp = ({ navigation }) => {
       <View
         style={{
           marginTop: SIZES.padding * 5,
-          height: 100,
+          height: 25,
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
         <Image
-          source={images.pizza_restaurant}
+          source={images.appLogo}
           resizeMode="contain"
           style={{
-            width: "60%"
+            borderRadius: 25,
+            padding: 25,
+            backgroundColor: COLORS.primary
           }}
         />
       </View>
@@ -71,52 +73,54 @@ const SignUp = ({ navigation }) => {
     return (
       <View
         style={{
-          marginTop: SIZES.padding * 3,
+          marginTop: SIZES.padding * 1.5,
           marginHorizontal: SIZES.padding * 3,
         }}
       >
         {/* Full Name */}
-        <View style={{ marginTop: SIZES.padding * 3 }}>
+        <View style={{ marginTop: SIZES.padding * 2 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Full Name</Text>
           <TextInput
             style={{
               marginVertical: SIZES.padding,
-              borderBottomColor: COLORS.white,
+              borderBottomColor: COLORS.primary,
               borderBottomWidth: 1,
               height: 40,
-              color: COLORS.white,
+              backgroundColor: COLORS.lightGray2,
+              color: COLORS.darkgray,
               ...FONTS.body3
             }}
+            selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.primary}
             placeholder="Enter Full Name"
             value={name}
             onChangeText={text => setName(text)}
-            placeholderTextColor={COLORS.white}
-            selectionColor={COLORS.white}
           />
         </View>
 
-        {/* Full Name */}
-        <View style={{ marginTop: SIZES.padding * 3 }}>
+        {/* Email */}
+        <View style={{ marginTop: SIZES.padding * 1.5 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Email Address</Text>
           <TextInput
             style={{
               marginVertical: SIZES.padding,
-              borderBottomColor: COLORS.white,
+              borderBottomColor: COLORS.primary,
               borderBottomWidth: 1,
               height: 40,
-              color: COLORS.white,
+              backgroundColor: COLORS.lightGray2,
+              color: COLORS.darkgray,
               ...FONTS.body3
             }}
+            selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.primary}
             placeholder="Enter Email Address"
             value={email}
             onChangeText={text => setEmail(text)}
-            placeholderTextColor={COLORS.white}
-            selectionColor={COLORS.white}
           />
         </View>
 
         {/* Phone Number */}
-        <View style={{ marginTop: SIZES.padding * 2 }}>
+        <View style={{ marginTop: SIZES.padding * 1.5 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Phone Number</Text>
 
           <View style={{ flexDirection: 'row' }}>
@@ -138,7 +142,7 @@ const SignUp = ({ navigation }) => {
                   resizeMode="contain"
                   style={{
                     width: 30,
-                    height: 30
+                    height: 30,
                   }}
                 />
               </View>
@@ -151,41 +155,42 @@ const SignUp = ({ navigation }) => {
             {/* Phone Number */}
             <TextInput
               style={{
-                flex: 1,
                 marginVertical: SIZES.padding,
-                borderBottomColor: COLORS.white,
+                borderBottomColor: COLORS.primary,
                 borderBottomWidth: 1,
                 height: 40,
-                color: COLORS.white,
+                backgroundColor: COLORS.lightGray2,
+                color: COLORS.darkgray,
                 ...FONTS.body3
               }}
+              selectionColor={COLORS.primary}
+              placeholderTextColor={COLORS.primary}
               keyboardType="numeric"
               placeholder="Enter Phone Number"
               value={contact}
               onChangeText={text => setContact(text)}
-              placeholderTextColor={COLORS.white}
-              selectionColor={COLORS.white}
             />
           </View>
         </View>
 
         {/* Password */}
-        <View style={{ marginTop: SIZES.padding * 2 }}>
+        <View style={{ marginTop: SIZES.padding * 1.5 }}>
           <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
           <TextInput
             style={{
               marginVertical: SIZES.padding,
-              borderBottomColor: COLORS.white,
+              borderBottomColor: COLORS.primary,
               borderBottomWidth: 1,
               height: 40,
-              color: COLORS.white,
+              backgroundColor: COLORS.lightGray2,
+              color: COLORS.darkgray,
               ...FONTS.body3
             }}
+            selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.primary}
             placeholder="Enter Password"
-            placeholderTextColor={COLORS.white}
             value={password}
             onChangeText={text => setPassword(text)}
-            selectionColor={COLORS.white}
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity
@@ -203,7 +208,7 @@ const SignUp = ({ navigation }) => {
               style={{
                 height: 20,
                 width: 20,
-                tintColor: COLORS.white
+                tintColor: COLORS.darkgray
               }}
             />
           </TouchableOpacity>
@@ -229,18 +234,20 @@ const SignUp = ({ navigation }) => {
             <Text style={{ color: COLORS.white }}>Signup Now</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ margin: SIZES.padding * 3 }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
           <TouchableOpacity
             style={{
               height: 30,
-              backgroundColor: COLORS.gray,
-              borderRadius: SIZES.radius / 1.5,
+              width: 100,
+              borderColor: COLORS.darkgray,
+              borderWidth: 1,
+              borderRadius: 5,
               alignItems: 'center',
               justifyContent: 'center'
             }}
             onPress={() => navigation.navigate("Login")}
           >
-            <Text style={{ color: COLORS.black, ...FONTS.h3 }}>Login</Text>
+            <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Login</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -253,7 +260,7 @@ const SignUp = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <View
-        style={{ flex: 1, backgroundColor: COLORS.secondary }}
+        style={{ flex: 1, backgroundColor: COLORS.lightGray4 }}
       >
         <ScrollView>
           {renderLogo()}
