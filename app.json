@@ -1,4 +1,10 @@
 {
   "name": "FoodDeliveryApp",
-  "displayName": "FoodDeliveryApp"
+  "displayName": "FoodDeliveryApp",
+
+  "expo": {
+    "web": {
+      "bundler": "metro"
+    }
+  }
 }

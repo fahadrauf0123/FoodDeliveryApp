@@ -1,17 +1,20 @@
 import React from 'react';
+import './global.css';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Home from './screens/Home';
 import Restaurant from './screens/Restaurant';
-import OrderDelivery from './screens/OrderDelivery';
 import Tabs from './navigation/Tabs';
 import {PersistGate} from 'redux-persist/integration/react';
-import {Text} from 'react-native';
 import {Provider} from 'react-redux';
 import {persistor, store} from './redux/store';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {Text, View} from 'react-native';
+import CartScreen from './screens/CartScreen';
+import OrderPreparing from './screens/OrderPreparing';
+import OrderDelivery from './screens/OrderDelivery';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +29,21 @@ const App = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Main" component={Main} />
+            <Stack.Screen
+              name="CartScreen"
+              component={CartScreen}
+              options={{headerShown: false, presentation: 'modal'}}
+            />
+            <Stack.Screen
+              name="OrderPreparing"
+              component={OrderPreparing}
+              options={{headerShown: false, presentation: 'modal'}}
+            />
+            <Stack.Screen
+              name="OrderDelivery"
+              component={OrderDelivery}
+              options={{headerShown: false}}
+            />
             {/* <Stack.Screen
               name="HomeTabs"
               component={Tabs}
