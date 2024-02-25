@@ -3,8 +3,6 @@ import {View, Image} from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
 
 const OrderPreparing = ({route, navigation}) => {
-  // const route = useRoute();
-
   const [restaurant, setRestaurant] = React.useState(null);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [orderItems, setOrderItems] = React.useState([]);
@@ -16,7 +14,6 @@ const OrderPreparing = ({route, navigation}) => {
     setRestaurant(restaurant);
     setCurrentLocation(currentLocation);
   });
-  // console.log(restaurant);
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('OrderDelivery', {
@@ -25,8 +22,6 @@ const OrderPreparing = ({route, navigation}) => {
       });
     }, 3000);
   }, []);
-  console.log(restaurant);
-  console.log(currentLocation);
   return (
     <View className="flex-1 bg-white justify-center items-center">
       <Image

@@ -112,12 +112,7 @@ const CartScreen = ({route, navigation}) => {
         <View>
           <TouchableOpacity
             style={{backgroundColor: COLORS.primary, opacity: 0.8}}
-            onPress={() =>
-              navigation.navigate('OrderPreparing', {
-                restaurant: restaurant,
-                currentLocation: currentLocation,
-              })
-            }
+            onPress={() => navigation.navigate('OrderPreparing')}
             className="p-3 rounded-full">
             <Text className="text-white text-center font-bold text-lg">
               Place Order

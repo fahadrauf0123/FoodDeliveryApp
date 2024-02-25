@@ -88,7 +88,7 @@ function Cart() {
                 borderRadius: SIZES.radius,
               }}
               onPress={() =>
-                navigation.navigate('OrderDelivery', {
+                navigation.navigate('OrderPreparing', {
                   restaurant: restaurant,
                   currentLocation: currentLocation,
                 })

@@ -2,13 +2,29 @@ import React from 'react';
 import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
+import {useRoute, useNavigation} from '@react-navigation/native';
 import {COLORS, FONTS, icons, SIZES, GOOGLE_API_KEY} from '../constants';
-import {restaurantData, initialCurrentLocation} from '../constants';
+import {Link} from '@react-navigation/native';
+
 const OrderDelivery = ({route, navigation}) => {
+  const [restaurant, setRestaurant] = React.useState(null);
+  const [currentLocation, setCurrentLocation] = React.useState(null);
+  const [orderItems, setOrderItems] = React.useState([]);
+
+  React.useEffect(() => {
+    let restaurant = route.params;
+    let currentLocation = route.params;
+
+    setRestaurant(restaurant);
+    setCurrentLocation(currentLocation);
+  });
+  console.log(currentLocation);
+  let fromLoc = currentLocation.gps;
+  let toLoc = currentLocation.location;
+  let street = currentLocation.streetName;
+
   const mapView = React.useRef();
 
-  const [restaurant, setRestaurant] = React.useState(null);
   const [streetName, setStreetName] = React.useState('');
   const [fromLocation, setFromLocation] = React.useState(null);
   const [toLocation, setToLocation] = React.useState(null);
@@ -19,19 +35,17 @@ const OrderDelivery = ({route, navigation}) => {
   const [angle, setAngle] = React.useState(0);
 
   React.useEffect(() => {
-    let restaurant = restaurantData[0];
-    let currentLocation = initialCurrentLocation;
-    console.log(restaurant);
-    console.log(currentLocation);
+    let {restaurant} = route.params;
+    let currentLocation = route;
     let fromLoc = currentLocation.gps;
-    let toLoc = restaurant.location;
+    let toLoc = currentLocation.location;
     let street = currentLocation.streetName;
 
     let mapRegion = {
       latitude: (fromLoc.latitude + toLoc.latitude) / 2,
       longitude: (fromLoc.longitude + toLoc.longitude) / 2,
-      latitudeDelta: Math.abs(fromLoc.latitude - toLoc.latitude) * 1.5,
-      longitudeDelta: Math.abs(fromLoc.longitude - toLoc.longitude) * 1.5,
+      latitudeDelta: Math.abs(fromLoc.latitude - toLoc.latitude) * 2,
+      longitudeDelta: Math.abs(fromLoc.longitude - toLoc.longitude) * 2,
     };
 
     setRestaurant(restaurant);
@@ -173,6 +187,7 @@ const OrderDelivery = ({route, navigation}) => {
           {destinationMarker()}
           {fromLocation ? carIcon() : null}
         </MapView>
+        <Text>Map View Here</Text>
       </View>
     );
   }
@@ -304,7 +319,7 @@ const OrderDelivery = ({route, navigation}) => {
                 justifyContent: 'center',
                 borderRadius: 10,
               }}
-              onPress={() => navigation.navigate('Home')}>
+              onPress={() => navigation.goBack()}>
               <Text style={{...FONTS.h4, color: COLORS.white}}>Cancel</Text>
             </TouchableOpacity>
           </View>
