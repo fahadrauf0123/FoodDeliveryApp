@@ -113,7 +113,7 @@ const CartScreen = ({route, navigation}) => {
           <TouchableOpacity
             style={{backgroundColor: COLORS.primary, opacity: 0.8}}
             onPress={() =>
-              navigation.navigate('OrderDelivery', {
+              navigation.navigate('OrderPreparing', {
                 restaurant: restaurant,
                 currentLocation: currentLocation,
               })
