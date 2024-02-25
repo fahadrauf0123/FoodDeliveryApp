@@ -1,5 +1,5 @@
-import { Dimensions } from 'react-native';
-const { width, height } = Dimensions.get('window');
+import {Dimensions} from 'react-native';
+const {width, height} = Dimensions.get('window');
 
 export const COLORS = {
   // base colors
@@ -16,6 +16,8 @@ export const COLORS = {
   lightGray4: '#F8F8F9',
   transparent: 'transparent',
   darkgray: '#898C95',
+  red: '#dc2626',
+  bgColor: opacity => `rgba(248, 113, 113, ${opacity})`,
 };
 
 export const SIZES = {
@@ -97,9 +99,9 @@ export const FONTS = {
     lineHeight: 22,
     color: COLORS.black,
   },
-  body5: { fontFamily: 'Roboto-Regular', fontSize: SIZES.body5, lineHeight: 22 },
+  body5: {fontFamily: 'Roboto-Regular', fontSize: SIZES.body5, lineHeight: 22},
 };
 
-const appTheme = { COLORS, SIZES, FONTS };
+const appTheme = {COLORS, SIZES, FONTS};
 
 export default appTheme;
