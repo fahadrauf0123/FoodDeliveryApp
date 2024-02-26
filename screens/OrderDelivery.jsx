@@ -5,10 +5,12 @@ import MapViewDirections from 'react-native-maps-directions';
 
 import {COLORS, FONTS, icons, SIZES, GOOGLE_API_KEY} from '../constants';
 import {restaurantData, initialCurrentLocation} from '../constants';
+import {useSelector, useDispatch} from 'react-redux';
+import {selectRestaurant} from '../slices/restaurantSlice';
+import {emptyCart} from '../slices/cartSlice';
 const OrderDelivery = ({route, navigation}) => {
   const mapView = React.useRef();
 
-  const [restaurant, setRestaurant] = React.useState(null);
   const [streetName, setStreetName] = React.useState('');
   const [fromLocation, setFromLocation] = React.useState(null);
   const [toLocation, setToLocation] = React.useState(null);
@@ -18,11 +20,15 @@ const OrderDelivery = ({route, navigation}) => {
   const [isReady, setIsReady] = React.useState(false);
   const [angle, setAngle] = React.useState(0);
 
+  let restaurant = useSelector(selectRestaurant);
+  const dispatch = useDispatch();
+  const cancelOrder = () => {
+    navigation.navigate('Home');
+    dispatch(emptyCart());
+  };
+
   React.useEffect(() => {
-    let restaurant = restaurantData[0];
     let currentLocation = initialCurrentLocation;
-    console.log(restaurant);
-    console.log(currentLocation);
     let fromLoc = currentLocation.gps;
     let toLoc = restaurant.location;
     let street = currentLocation.streetName;
@@ -34,7 +40,6 @@ const OrderDelivery = ({route, navigation}) => {
       longitudeDelta: Math.abs(fromLoc.longitude - toLoc.longitude) * 1.5,
     };
 
-    setRestaurant(restaurant);
     setStreetName(street);
     setFromLocation(fromLoc);
     setToLocation(toLoc);
@@ -78,7 +83,10 @@ const OrderDelivery = ({route, navigation}) => {
 
   function renderMap() {
     const destinationMarker = () => (
-      <Marker coordinate={toLocation}>
+      <Marker
+        coordinate={toLocation}
+        title={restaurant?.name}
+        description={restaurant?.description}>
         <View
           style={{
             height: 40,
@@ -304,7 +312,7 @@ const OrderDelivery = ({route, navigation}) => {
                 justifyContent: 'center',
                 borderRadius: 10,
               }}
-              onPress={() => navigation.navigate('Home')}>
+              onPress={cancelOrder}>
               <Text style={{...FONTS.h4, color: COLORS.white}}>Cancel</Text>
             </TouchableOpacity>
           </View>

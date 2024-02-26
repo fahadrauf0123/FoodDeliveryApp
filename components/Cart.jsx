@@ -2,10 +2,14 @@ import React from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {COLORS} from '../constants';
 import {useRoute, useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {selectCartItems, selectCartTotal} from '../slices/cartSlice';
 const Cart = () => {
   const navigation = useNavigation();
-  const {params} = useRoute();
-  let item = params;
+
+  const cartItems = useSelector(selectCartItems);
+  const cartTotal = useSelector(selectCartTotal);
+  if (!cartItems.length) return;
   return (
     <View className="bg-white">
       <TouchableOpacity
@@ -16,18 +20,13 @@ const Cart = () => {
           margin: 10,
           zIndex: 50,
         }}
-        onPress={() =>
-          navigation.navigate('CartScreen', {
-            ...item,
-            currentLocation,
-          })
-        }
+        onPress={() => navigation.navigate('CartScreen', {})}
         className="flex-row justify-between items-center mx-5 rounded-full p-4 py-3 shadow-lg">
         <View
           className="p-2 px-4 rounded-full"
           style={{backgroundColor: 'rgba(255,255,255,0.3)', margin: 2}}>
           <Text className="font-extrabold text-white text-lg">
-            {/* {basketItems.length} */}3
+            {cartItems.length}
           </Text>
         </View>
 
@@ -36,7 +35,7 @@ const Cart = () => {
         </Text>
         <View style={{margin: 2}}>
           <Text className="font-extrabold px-4 text-white text-lg">
-            {/* ${basketTotal} */}$ {23}
+            $ {cartTotal}
           </Text>
         </View>
       </TouchableOpacity>

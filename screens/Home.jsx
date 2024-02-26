@@ -484,7 +484,7 @@ const Home = ({navigation}) => {
         style={{marginBottom: SIZES.padding * 2}}
         onPress={() =>
           navigation.navigate('Restaurant', {
-            item,
+            ...item,
             currentLocation,
           })
         }>

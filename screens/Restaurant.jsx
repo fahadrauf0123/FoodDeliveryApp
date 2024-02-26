@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -12,23 +12,34 @@ import {
 import {icons, COLORS, SIZES, FONTS} from '../constants';
 import {useRoute} from '@react-navigation/native';
 import DishRow from '../components/Dishes';
+import {useDispatch} from 'react-redux';
 import * as Icon from 'react-native-feather';
+import {setRestaurant} from '../slices/restaurantSlice';
+import Cart from '../components/Cart';
 // import Cart from '../components/Cart';
 const Restaurant = ({route, navigation}) => {
-  const [restaurant, setRestaurant] = React.useState(null);
-  const [currentLocation, setCurrentLocation] = React.useState(null);
-  const [orderItems, setOrderItems] = React.useState([]);
+  // const [restaurant, setRestaurant] = React.useState(null);
+  // const [currentLocation, setCurrentLocation] = React.useState(null);
+  // const [orderItems, setOrderItems] = React.useState([]);
 
-  React.useEffect(() => {
-    let {item, currentLocation} = route.params;
+  // React.useEffect(() => {
+  //   let {item, currentLocation} = route.params;
 
-    setRestaurant(item);
-    setCurrentLocation(currentLocation);
-  });
+  //   setRestaurant(item);
+  //   setCurrentLocation(currentLocation);
+  // });
+  let item = route.params;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (item && item.id) {
+      dispatch(setRestaurant({...item}));
+    }
+  }, []);
+
   return (
     <View>
       <ScrollView>
-        <Image className="w-full h-72" source={restaurant?.photo} />
+        <Image className="w-full h-72" source={item.photo} />
         <TouchableOpacity
           className="absolute top-3 left-4 bg-gray-50 p-2 rounded-full shadow"
           onPress={() => navigation.goBack()}>
@@ -38,9 +49,7 @@ const Restaurant = ({route, navigation}) => {
           style={{borderTopLeftRadius: 40, borderTopRightRadius: 40}}
           className="bg-white -mt-12 pt-6">
           <View className="px-5">
-            <Text className="text-3xl font-bold text-black">
-              {restaurant?.name}
-            </Text>
+            <Text className="text-3xl font-bold text-black">{item.name}</Text>
             <View className="flex-row space-x-2 my-1">
               <View className="flex-row items-center space-x-1">
                 <Image
@@ -48,7 +57,7 @@ const Restaurant = ({route, navigation}) => {
                   className="h-4 w-4"
                 />
                 <Text className="text-xs">
-                  <Text className="text-green-700">{restaurant?.rating}</Text>
+                  <Text className="text-green-700">{item.rating}</Text>
                   <Text className="text-gray-700"> (4.6k review)</Text> ·{' '}
                   {/* <Text className="font-semibold text-gray-700">{type}</Text> */}
                 </Text>
@@ -59,9 +68,10 @@ const Restaurant = ({route, navigation}) => {
 
         <View className="pb-36 bg-white">
           <Text className="text-black px-4 py-4 text-2xl font-bold">Menu</Text>
-          {restaurant?.menus.map(menu => {
+          {item.menus.map(menu => {
             return (
               <DishRow
+                item={{...menu}}
                 key={menu.menuId}
                 name={menu.name}
                 description={menu.description}
@@ -71,40 +81,7 @@ const Restaurant = ({route, navigation}) => {
             );
           })}
         </View>
-        <View className="bg-white">
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              bottom: 10,
-              backgroundColor: COLORS.primary,
-              margin: 10,
-              zIndex: 50,
-            }}
-            onPress={() =>
-              navigation.navigate('CartScreen', {
-                restaurant: restaurant,
-                currentLocation: currentLocation,
-              })
-            }
-            className="flex-row justify-between items-center mx-5 rounded-full p-4 py-3 shadow-lg">
-            <View
-              className="p-2 px-4 rounded-full"
-              style={{backgroundColor: 'rgba(255,255,255,0.3)', margin: 2}}>
-              <Text className="font-extrabold text-white text-lg">
-                {/* {basketItems.length} */}3
-              </Text>
-            </View>
-
-            <Text className="flex-1 text-center font-extrabold text-white text-lg">
-              View Cart
-            </Text>
-            <View style={{margin: 2}}>
-              <Text className="font-extrabold px-4 text-white text-lg">
-                {/* ${basketTotal} */}$ {23}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        <Cart />
       </ScrollView>
     </View>
   );

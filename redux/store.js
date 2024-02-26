@@ -1,8 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
-import cartReducer from './cartReducer'
-import authReducer from './authReducer'
-import userReducer from './userReducer'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import {configureStore} from '@reduxjs/toolkit';
+import cartReducer from './cartReducer';
+import authReducer from './authReducer';
+import userReducer from './userReducer';
+import {cartSlice} from '../slices/cartSlice';
+import {restaurantSlice} from '../slices/restaurantSlice';
+import currentLocationSlice from '../slices/currentLocationSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
   persistReducer,
@@ -12,29 +15,29 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist'
+} from 'redux-persist';
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
-}
+};
 
-const cartPersistedReducer = persistReducer(persistConfig, cartReducer)
-const authPersistedReducer = persistReducer(persistConfig, authReducer)
+const cartPersistedReducer = persistReducer(persistConfig, cartReducer);
+const authPersistedReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
     cart: cartPersistedReducer,
     auth: authPersistedReducer,
-    user: userReducer
+    user: userReducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-})
+});
 
-export let persistor = persistStore(store)
+export let persistor = persistStore(store);

@@ -1,24 +1,34 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
 import {COLORS} from '../constants';
 import * as Icon from 'react-native-feather';
-import {useRoute} from '@react-navigation/native';
-import {opacity} from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
+import {useSelector, useDispatch} from 'react-redux';
+import {selectRestaurant} from '../slices/restaurantSlice';
+import {
+  removeFromCart,
+  selectCartItems,
+  selectCartTotal,
+} from '../slices/cartSlice';
 
 const CartScreen = ({route, navigation}) => {
-  const [restaurant, setRestaurant] = React.useState(null);
-  const [currentLocation, setCurrentLocation] = React.useState(null);
-  const [orderItems, setOrderItems] = React.useState([]);
+  const restaurant = useSelector(selectRestaurant);
+  const cartItems = useSelector(selectCartItems);
+  const cartTotal = useSelector(selectCartTotal);
+  const [groupedItems, setGroupedItems] = useState([]);
 
-  React.useEffect(() => {
-    let restaurant = route.params?.restaurant;
-    let currentLocation = route.params?.currentLocation;
-
-    setRestaurant(restaurant);
-    setCurrentLocation(currentLocation);
-  });
-  // console.log(restaurant);
-  // console.log(currentLocation);
+  const dispatch = useDispatch();
+  const deliveryFee = 2;
+  useEffect(() => {
+    const items = cartItems.reduce((group, item) => {
+      if (group[item.menuId]) {
+        group[item.menuId].push(item);
+      } else {
+        group[item.menuId] = [item];
+      }
+      return group;
+    }, {});
+    setGroupedItems(items);
+  }, [cartItems]);
   return (
     <View className=" bg-white flex-1">
       {/* top button */}
@@ -60,15 +70,16 @@ const CartScreen = ({route, navigation}) => {
         contentContainerStyle={{
           paddingBottom: 50,
         }}>
-        {restaurant?.menus.map(menu => {
+        {Object.entries(groupedItems).map(([key, items]) => {
+          let menu = items[0];
           return (
             <View
-              key={menu.menuId}
+              key={key}
               className="flex-row items-center space-x-3 py-2 px-4 bg-white rounded-3xl mx-2 mb-3 shadow-md">
               <Text
                 style={{color: COLORS.red, padding: 10}}
                 className="font-bold">
-                2 x
+                {items.length} x
               </Text>
               <Image className="h-14 w-14 rounded-full" source={menu.photo} />
               <Text className="flex-1 font-bold text-gray-700 text-sm px-4">
@@ -78,10 +89,9 @@ const CartScreen = ({route, navigation}) => {
                 ${menu.price}
               </Text>
               <TouchableOpacity
+                onPress={() => dispatch(removeFromCart({id: menu.menuId}))}
                 className="p-1 rounded-full"
-                style={{backgroundColor: COLORS.primary}}
-                // onPress={() => dispatch(removeFromBasket({id: items[0]?.id}))}
-              >
+                style={{backgroundColor: COLORS.primary}}>
                 <Icon.Minus
                   strokeWidth={2}
                   height={20}
@@ -99,15 +109,17 @@ const CartScreen = ({route, navigation}) => {
         className=" p-6 px-8 rounded-t-3xl space-y-4">
         <View className="flex-row justify-between">
           <Text className="text-gray-700 py-2">Subtotal</Text>
-          <Text className="text-gray-700 py-2">$ {20}</Text>
+          <Text className="text-gray-700 py-2">$ {cartTotal}</Text>
         </View>
         <View className="flex-row justify-between">
           <Text className="text-gray-700 py-2">Delivery Fee</Text>
-          <Text className="text-gray-700 py-2">$ {3}</Text>
+          <Text className="text-gray-700 py-2">$ {deliveryFee}</Text>
         </View>
         <View className="flex-row justify-between">
           <Text className="font-extrabold text-black py-2">Order Total</Text>
-          <Text className="font-extrabold text-black py-2">$ {30}</Text>
+          <Text className="font-extrabold text-black py-2">
+            $ {deliveryFee + cartTotal}
+          </Text>
         </View>
         <View>
           <TouchableOpacity
