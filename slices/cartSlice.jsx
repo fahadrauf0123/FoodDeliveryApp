@@ -1,5 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {createSelector} from 'reselect';
+import {createSelector, createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   items: [],
@@ -38,7 +37,7 @@ export const selectCartItems = state => state.cart.items;
 export const selectCartItemsById = (state, id) =>
   state.cart.items.filter(item => item.menuId == id);
 // export const selectCartItemsById = createSelector(
-//   (state, id) => state.cart.items,
+//   state => state.cart.items,
 //   (items, id) => items.filter(item => item.menuId == id),
 // );
 export const selectCartTotal = state =>

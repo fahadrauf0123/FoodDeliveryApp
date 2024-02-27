@@ -28,6 +28,7 @@ const sushi = require('../assets/images/sushi.jpg');
 const teh_c_peng = require('../assets/images/teh-c-peng.jpg');
 const tomato_pasta = require('../assets/images/tomato-pasta.jpg');
 const pkFlag = require('../assets/images/pk-flag.png');
+const splash = require('../assets/images/splash.png');
 
 export default {
   pkFlag,
@@ -63,4 +64,5 @@ export default {
   salad,
   teh_c_peng,
   tomato_pasta,
+  splash,
 };

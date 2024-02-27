@@ -82,7 +82,7 @@ const Login = ({navigation}) => {
           justifyContent: 'center',
         }}>
         <Image
-          source={images.pizza_restaurant}
+          source={images.splash}
           resizeMode="contain"
           style={{
             width: '60%',
@@ -96,11 +96,11 @@ const Login = ({navigation}) => {
     return (
       <View
         style={{
-          marginTop: SIZES.padding * 3,
+          marginTop: SIZES.padding * 7,
           marginHorizontal: SIZES.padding * 3,
         }}>
         <View style={{marginTop: SIZES.padding * 2}}>
-          <Text style={{color: COLORS.lightGreen, ...FONTS.body3}}>
+          <Text style={{...FONTS.body3, color: COLORS.primary}}>
             Email Address
           </Text>
 
@@ -109,40 +109,38 @@ const Login = ({navigation}) => {
               style={{
                 flex: 1,
                 marginVertical: SIZES.padding,
-                borderBottomColor: COLORS.white,
+                borderBottomColor: COLORS.black,
                 borderBottomWidth: 1,
                 height: 40,
                 color: COLORS.white,
                 ...FONTS.body3,
               }}
-              placeholder="Email Address"
+              placeholder="please enter email ..."
               value={email}
               onChangeText={text => setEmail(text)}
-              placeholderTextColor={COLORS.white}
-              selectionColor={COLORS.white}
+              placeholderTextColor={COLORS.secondary}
+              selectionColor={COLORS.secondary}
             />
           </View>
         </View>
 
         {/* Password */}
         <View style={{marginTop: SIZES.padding * 2}}>
-          <Text style={{color: COLORS.lightGreen, ...FONTS.body3}}>
-            Password
-          </Text>
+          <Text style={{...FONTS.body3, color: COLORS.primary}}>Password</Text>
           <TextInput
             style={{
               marginVertical: SIZES.padding,
-              borderBottomColor: COLORS.white,
+              borderBottomColor: COLORS.black,
               borderBottomWidth: 1,
               height: 40,
               color: COLORS.white,
               ...FONTS.body3,
             }}
-            placeholder="Enter Password"
-            placeholderTextColor={COLORS.white}
+            placeholder="please enter password..."
+            placeholderTextColor={COLORS.secondary}
             value={password}
             onChangeText={text => setPassword(text)}
-            selectionColor={COLORS.white}
+            selectionColor={COLORS.secondary}
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity
@@ -209,7 +207,7 @@ const Login = ({navigation}) => {
         colors={[COLORS.lime, COLORS.emerald]}
         style={{ flex: 1 }}
       > */}
-      <View style={{flex: 1, backgroundColor: COLORS.secondary}}>
+      <View style={{flex: 1, backgroundColor: COLORS.white}}>
         <ScrollView>
           {renderLogo()}
           {renderForm()}

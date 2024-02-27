@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {COLORS} from '../constants';
 import * as Icon from 'react-native-feather';
 import {useDispatch, useSelector} from 'react-redux';
-import {addToCart} from '../redux';
+import {addToCart} from '../slices/cartSlice';
 import {removeFromCart, selectCartItemsById} from '../slices/cartSlice';
 
 const DishRow = ({item}) => {

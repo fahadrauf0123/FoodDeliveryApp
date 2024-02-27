@@ -2,9 +2,8 @@ import {configureStore} from '@reduxjs/toolkit';
 import cartReducer from './cartReducer';
 import authReducer from './authReducer';
 import userReducer from './userReducer';
-import {cartSlice} from '../slices/cartSlice';
-import {restaurantSlice} from '../slices/restaurantSlice';
-import currentLocationSlice from '../slices/currentLocationSlice';
+import cartSlice from '../slices/cartSlice';
+import restaurantSlice from '../slices/restaurantSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
@@ -28,9 +27,11 @@ const authPersistedReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
-    cart: cartPersistedReducer,
+    // cart: cartPersistedReducer,
     auth: authPersistedReducer,
     user: userReducer,
+    cart: cartSlice,
+    restaurant: restaurantSlice,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
