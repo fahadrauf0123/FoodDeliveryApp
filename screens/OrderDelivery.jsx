@@ -1,14 +1,14 @@
 import React from 'react';
-import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import { View, Text, Image, TouchableOpacity, Linking } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
-import {COLORS, FONTS, icons, SIZES, GOOGLE_API_KEY} from '../constants';
-import {restaurantData, initialCurrentLocation} from '../constants';
-import {useSelector, useDispatch} from 'react-redux';
-import {selectRestaurant} from '../slices/restaurantSlice';
-import {emptyCart} from '../slices/cartSlice';
-const OrderDelivery = ({route, navigation}) => {
+import { COLORS, FONTS, icons, SIZES, GOOGLE_API_KEY } from '../constants';
+import { restaurantData, initialCurrentLocation } from '../constants';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectRestaurant } from '../slices/restaurantSlice';
+import { emptyCart } from '../slices/cartSlice';
+const OrderDelivery = ({ route, navigation }) => {
   const mapView = React.useRef();
 
   const [streetName, setStreetName] = React.useState('');
@@ -20,6 +20,9 @@ const OrderDelivery = ({route, navigation}) => {
   const [isReady, setIsReady] = React.useState(false);
   const [angle, setAngle] = React.useState(0);
 
+  const authToken = useSelector(state => state.auth.authToken);
+
+
   let restaurant = useSelector(selectRestaurant);
   const dispatch = useDispatch();
   const cancelOrder = () => {
@@ -27,20 +30,38 @@ const OrderDelivery = ({route, navigation}) => {
     dispatch(emptyCart());
   };
 
+  const fetchRestaurantsByID = async (resID) => {
+    try {
+      const res = await axios.get(`${baseUrl}/restaurant/getRestaurant/${route.params?.restaurantID}`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setRestaurant(res.data.restaurant)
+    } catch (error) {
+      console.log("error by res fetch ==>", error.response.data)
+      ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT)
+    }
+  }
+
   React.useEffect(() => {
-    let currentLocation = initialCurrentLocation;
-    let fromLoc = currentLocation.gps;
-    let toLoc = restaurant.location;
-    let street = currentLocation.streetName;
+    // let currentLocation = initialCurrentLocation;
+    // let fromLoc = currentLocation.gps;
+    // let toLoc = restaurant.location;
+    // let street = currentLocation.streetName;
 
     let mapRegion = {
-      latitude: (fromLoc.latitude + toLoc.latitude) / 2,
-      longitude: (fromLoc.longitude + toLoc.longitude) / 2,
-      latitudeDelta: Math.abs(fromLoc.latitude - toLoc.latitude) * 1.5,
-      longitudeDelta: Math.abs(fromLoc.longitude - toLoc.longitude) * 1.5,
+      // latitude: (fromLoc.latitude + toLoc.latitude) / 2,
+      // longitude: (fromLoc.longitude + toLoc.longitude) / 2,
+      // latitudeDelta: Math.abs(fromLoc.latitude - toLoc.latitude) * 1.5,
+      // longitudeDelta: Math.abs(fromLoc.longitude - toLoc.longitude) * 1.5,
+      latitude: (24.9442917 + 24.9442778) / 2,
+      longitude: (67.1006523 + 67.1005557) / 2,
+      latitudeDelta: Math.abs((24.9442917 - 24.9442778)) * 1.5,
+      longitudeDelta: Math.abs((67.1006523 - 67.1005557)) * 1.5,
     };
 
-    setStreetName(street);
+    setStreetName("Abul Hassan Ispahni Road");
     setFromLocation(fromLoc);
     setToLocation(toLoc);
     setRegion(mapRegion);
@@ -121,7 +142,7 @@ const OrderDelivery = ({route, navigation}) => {
     const carIcon = () => (
       <Marker
         coordinate={fromLocation}
-        anchor={{x: 0.5, y: 0.5}}
+        anchor={{ x: 0.5, y: 0.5 }}
         flat={true}
         rotation={angle}>
         <Image
@@ -135,12 +156,12 @@ const OrderDelivery = ({route, navigation}) => {
     );
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <MapView
           ref={mapView}
           provider={PROVIDER_GOOGLE}
           initialRegion={region}
-          style={{flex: 1}}>
+          style={{ flex: 1 }}>
           <MapViewDirections
             origin={fromLocation}
             destination={toLocation}
@@ -216,11 +237,11 @@ const OrderDelivery = ({route, navigation}) => {
             }}
           />
 
-          <View style={{flex: 1}}>
-            <Text style={{...FONTS.body3}}>{streetName}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ ...FONTS.body3 }}>{streetName}</Text>
           </View>
 
-          <Text style={{...FONTS.body3}}>{Math.ceil(duration)} mins</Text>
+          <Text style={{ ...FONTS.body3 }}>{Math.ceil(duration)} mins</Text>
         </View>
       </View>
     );
@@ -245,7 +266,7 @@ const OrderDelivery = ({route, navigation}) => {
             borderRadius: SIZES.radius,
             backgroundColor: COLORS.white,
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {/* Avatar */}
             <Image
               source={restaurant?.courier.avatar}
@@ -256,12 +277,12 @@ const OrderDelivery = ({route, navigation}) => {
               }}
             />
 
-            <View style={{flex: 1, marginLeft: SIZES.padding}}>
+            <View style={{ flex: 1, marginLeft: SIZES.padding }}>
               {/* Name & Rating */}
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{...FONTS.h4}}>{restaurant?.courier.name}</Text>
-                <View style={{flexDirection: 'row'}}>
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ ...FONTS.h4 }}>{restaurant?.courier.name}</Text>
+                <View style={{ flexDirection: 'row' }}>
                   <Image
                     source={icons.star}
                     style={{
@@ -271,12 +292,12 @@ const OrderDelivery = ({route, navigation}) => {
                       marginRight: SIZES.padding,
                     }}
                   />
-                  <Text style={{...FONTS.body3}}>{restaurant?.rating}</Text>
+                  <Text style={{ ...FONTS.body3 }}>{restaurant?.rating}</Text>
                 </View>
               </View>
 
               {/* Restaurant */}
-              <Text style={{color: COLORS.darkgray, ...FONTS.body4}}>
+              <Text style={{ color: COLORS.darkgray, ...FONTS.body4 }}>
                 {restaurant?.name}
               </Text>
             </View>
@@ -300,7 +321,7 @@ const OrderDelivery = ({route, navigation}) => {
                 borderRadius: 10,
               }}
               onPress={() => Linking.openURL(`${restaurant?.courier.number}`)}>
-              <Text style={{...FONTS.h4, color: COLORS.white}}>Call</Text>
+              <Text style={{ ...FONTS.h4, color: COLORS.white }}>Call</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -313,7 +334,7 @@ const OrderDelivery = ({route, navigation}) => {
                 borderRadius: 10,
               }}
               onPress={cancelOrder}>
-              <Text style={{...FONTS.h4, color: COLORS.white}}>Cancel</Text>
+              <Text style={{ ...FONTS.h4, color: COLORS.white }}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -343,7 +364,7 @@ const OrderDelivery = ({route, navigation}) => {
             justifyContent: 'center',
           }}
           onPress={() => zoomIn()}>
-          <Text style={{...FONTS.body1}}>+</Text>
+          <Text style={{ ...FONTS.body1 }}>+</Text>
         </TouchableOpacity>
 
         {/* Zoom Out */}
@@ -357,14 +378,14 @@ const OrderDelivery = ({route, navigation}) => {
             justifyContent: 'center',
           }}
           onPress={() => zoomOut()}>
-          <Text style={{...FONTS.body1}}>-</Text>
+          <Text style={{ ...FONTS.body1 }}>-</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {renderMap()}
       {renderDestinationHeader()}
       {renderDeliveryInfo()}

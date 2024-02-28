@@ -1,33 +1,45 @@
-import React, {useEffect} from 'react';
-import {View, Image} from 'react-native';
-import {useRoute, useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, Text } from 'react-native';
+import { io } from 'socket.io-client';
+import { backendUrl } from '../env';
+import { useSelector } from 'react-redux';
 
-const OrderPreparing = ({route, navigation}) => {
-  const [restaurant, setRestaurant] = React.useState(null);
-  const [currentLocation, setCurrentLocation] = React.useState(null);
-  const [orderItems, setOrderItems] = React.useState([]);
+const OrderPreparing = ({ route, navigation }) => {
 
-  React.useEffect(() => {
-    let restaurant = route.params?.restaurant;
-    let currentLocation = route.params?.currentLocation;
+  const authToken = useSelector(state => state.auth.authToken);
+  const [socket, setSocket] = useState(null)
 
-    setRestaurant(restaurant);
-    setCurrentLocation(currentLocation);
-  });
   useEffect(() => {
-    setTimeout(() => {
+    const chatSocket = io(`${backendUrl}/?token=${authToken}`);
+    setSocket(chatSocket);
+
+    chatSocket.emit(
+      'joinRoom',
+      {
+        roomID: route.params?.orderID,
+      },
+    );
+
+    chatSocket.emit("orderPlaced", { orderID: route.params?.orderID })
+
+    chatSocket?.on('orderStatus', (status) => {
+      console.log(status);
       navigation.navigate('OrderDelivery', {
-        restaurant: restaurant,
-        currentLocation: currentLocation,
+        orderID: route.params?.orderID,
+        socket,
       });
-    }, 3000);
+    });
+    // setTimeout(() => {
+    // }, 3000);
   }, []);
+
   return (
     <View className="flex-1 bg-white justify-center items-center">
       <Image
         source={require('../assets/images/delivery.gif')}
         className="h-80 w-80"
       />
+      <Text>Your Order is being prepared</Text>
     </View>
   );
 };

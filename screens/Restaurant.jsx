@@ -1,55 +1,75 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
-  StyleSheet,
-  SafeAreaView,
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   Image,
-  Animated,
 } from 'react-native';
-import {icons, COLORS, SIZES, FONTS} from '../constants';
-import {useRoute} from '@react-navigation/native';
+import { COLORS } from '../constants';
 import DishRow from '../components/Dishes';
-import {useDispatch} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Icon from 'react-native-feather';
-import {setRestaurant} from '../slices/restaurantSlice';
 import Cart from '../components/Cart';
-// import Cart from '../components/Cart';
-const Restaurant = ({route, navigation}) => {
-  // const [restaurant, setRestaurant] = React.useState(null);
-  // const [currentLocation, setCurrentLocation] = React.useState(null);
-  // const [orderItems, setOrderItems] = React.useState([]);
+import axios from 'axios';
+import { baseUrl } from '../env';
 
-  // React.useEffect(() => {
-  //   let {item, currentLocation} = route.params;
+const Restaurant = ({ route, navigation }) => {
+  const [restaurant, setRestaurant] = React.useState(null);
+  const [products, setProducts] = React.useState([]);
 
-  //   setRestaurant(item);
-  //   setCurrentLocation(currentLocation);
-  // });
-  let item = route.params;
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (item && item.id) {
-      dispatch(setRestaurant({...item}));
+  const authToken = useSelector(state => state.auth.authToken);
+
+  const fetchRestaurantsByID = async (resID) => {
+    try {
+      const res = await axios.get(`${baseUrl}/restaurant/getRestaurant/${resID}`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setRestaurant(res.data.restaurant)
+    } catch (error) {
+      console.log("error by res fetch ==>", error.response.data)
+      ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT)
     }
-  }, []);
+  }
+
+  const fetchProducts = async (resID) => {
+    try {
+      const res = await axios.get(`${baseUrl}/restaurant/getProducts/${resID}`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setProducts(res.data.products)
+    } catch (error) {
+      console.log("error by product fetch ==>", error.response.data)
+      ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT)
+      setRestaurants([])
+    }
+  }
+
+  let { restaurantID, location } = route.params;
+
+  useEffect(() => {
+    fetchRestaurantsByID(restaurantID)
+    fetchProducts(restaurantID)
+  }, [restaurantID])
 
   return (
     <View>
       <ScrollView>
-        <Image className="w-full h-72" source={item.photo} />
+        <Image className="w-full h-72" source={{ uri: restaurant?.logo }} />
         <TouchableOpacity
           className="absolute top-3 left-4 bg-gray-50 p-2 rounded-full shadow"
           onPress={() => navigation.goBack()}>
           <Icon.ArrowLeft strokeWidth={3} stroke={COLORS.primary} />
         </TouchableOpacity>
         <View
-          style={{borderTopLeftRadius: 40, borderTopRightRadius: 40}}
+          style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40 }}
           className="bg-white -mt-12 pt-6">
           <View className="px-5">
-            <Text className="text-3xl font-bold text-black">{item.name}</Text>
+            <Text className="text-3xl font-bold text-black">{restaurant?.name}</Text>
             <View className="flex-row space-x-2 my-1">
               <View className="flex-row items-center space-x-1">
                 <Image
@@ -57,9 +77,8 @@ const Restaurant = ({route, navigation}) => {
                   className="h-4 w-4"
                 />
                 <Text className="text-xs">
-                  <Text className="text-green-700">{item.rating}</Text>
-                  <Text className="text-gray-700"> (4.6k review)</Text> ·{' '}
-                  {/* <Text className="font-semibold text-gray-700">{type}</Text> */}
+                  <Text className="text-green-700">4.1</Text>
+                  <Text className="text-gray-700"> - (4.6k review)</Text>
                 </Text>
               </View>
             </View>
@@ -68,15 +87,11 @@ const Restaurant = ({route, navigation}) => {
 
         <View className="pb-36 bg-white">
           <Text className="text-black px-4 py-4 text-2xl font-bold">Menu</Text>
-          {item.menus.map(menu => {
+          {products?.map(menu => {
             return (
               <DishRow
-                item={{...menu}}
-                key={menu.menuId}
-                name={menu.name}
-                description={menu.description}
-                price={menu.price}
-                image={menu.photo}
+                item={{ ...menu }}
+                key={menu._id}
               />
             );
           })}

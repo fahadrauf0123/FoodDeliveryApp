@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,13 +12,13 @@ import {
 } from 'react-native';
 // import LinearGradient from 'react-native-linear-gradient'
 import axios from 'axios';
-import {baseUrl} from '../env';
+import { baseUrl } from '../env';
 
-import {COLORS, SIZES, FONTS, icons, images} from '../constants';
-import {authSuccessful} from '../redux';
-import {useDispatch, useSelector} from 'react-redux';
+import { COLORS, SIZES, FONTS, icons, images } from '../constants';
+import { authSuccessful, logoutSuccessful } from '../redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const authToken = useSelector(state => state.auth.authToken);
 
   const dispatch = useDispatch();
@@ -44,6 +44,7 @@ const Login = ({navigation}) => {
         navigation.navigate('HomeTabs');
       }
     } catch (error) {
+      console.log('here')
       ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT);
     }
   };
@@ -58,11 +59,11 @@ const Login = ({navigation}) => {
         });
         if (res.status == 200) {
           ToastAndroid.show('Success', ToastAndroid.SHORT);
-          dispatch(authSuccessful(res.data.data.accessToken));
+          dispatch(authSuccessful(authToken));
           navigation.navigate('HomeTabs');
         }
       } catch (error) {
-        // console.log(error.response.data);
+        dispatch(logoutSuccessful())
         ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT);
       }
     }
@@ -99,12 +100,12 @@ const Login = ({navigation}) => {
           marginTop: SIZES.padding * 7,
           marginHorizontal: SIZES.padding * 3,
         }}>
-        <View style={{marginTop: SIZES.padding * 2}}>
-          <Text style={{...FONTS.body3, color: COLORS.primary}}>
+        <View style={{ marginTop: SIZES.padding * 2 }}>
+          <Text style={{ ...FONTS.body3, color: COLORS.primary }}>
             Email Address
           </Text>
 
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <TextInput
               style={{
                 flex: 1,
@@ -125,8 +126,8 @@ const Login = ({navigation}) => {
         </View>
 
         {/* Password */}
-        <View style={{marginTop: SIZES.padding * 2}}>
-          <Text style={{...FONTS.body3, color: COLORS.primary}}>Password</Text>
+        <View style={{ marginTop: SIZES.padding * 2 }}>
+          <Text style={{ ...FONTS.body3, color: COLORS.primary }}>Password</Text>
           <TextInput
             style={{
               marginVertical: SIZES.padding,
@@ -169,7 +170,7 @@ const Login = ({navigation}) => {
   function renderButton() {
     return (
       <>
-        <View style={{margin: SIZES.padding * 3}}>
+        <View style={{ margin: SIZES.padding * 3 }}>
           <TouchableOpacity
             style={{
               height: 50,
@@ -179,10 +180,10 @@ const Login = ({navigation}) => {
               justifyContent: 'center',
             }}
             onPress={() => handleLogin()}>
-            <Text style={{color: COLORS.white}}>Login Now</Text>
+            <Text style={{ color: COLORS.white }}>Login Now</Text>
           </TouchableOpacity>
         </View>
-        <View style={{margin: SIZES.padding * 3}}>
+        <View style={{ margin: SIZES.padding * 3 }}>
           <TouchableOpacity
             style={{
               height: 30,
@@ -192,7 +193,7 @@ const Login = ({navigation}) => {
               justifyContent: 'center',
             }}
             onPress={() => navigation.navigate('SignUp')}>
-            <Text style={{color: COLORS.black, ...FONTS.h3}}>Signup</Text>
+            <Text style={{ color: COLORS.black, ...FONTS.h3 }}>Signup</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -202,12 +203,12 @@ const Login = ({navigation}) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       {/* <LinearGradient
         colors={[COLORS.lime, COLORS.emerald]}
         style={{ flex: 1 }}
       > */}
-      <View style={{flex: 1, backgroundColor: COLORS.white}}>
+      <View style={{ flex: 1, backgroundColor: COLORS.white }}>
         <ScrollView>
           {renderLogo()}
           {renderForm()}

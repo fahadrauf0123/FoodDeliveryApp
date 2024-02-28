@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ToastAndroid,
 } from 'react-native';
+import GetLocation from 'react-native-get-location'
+import { icons, images, SIZES, COLORS, FONTS } from '../constants';
+import { baseUrl } from '../env';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-import {icons, images, SIZES, COLORS, FONTS} from '../constants';
-
-const Home = ({navigation}) => {
-  // Dummy Datas
+const Home = ({ navigation }) => {
 
   const initialCurrentLocation = {
     streetName: 'Food Corner',
@@ -75,7 +78,6 @@ const Home = ({navigation}) => {
     },
   ];
 
-  // price rating
   const affordable = 1;
   const fairPrice = 2;
   const expensive = 3;
@@ -332,26 +334,89 @@ const Home = ({navigation}) => {
     },
   ];
 
-  const [categories, setCategories] = React.useState(categoryData);
+  const authToken = useSelector(state => state.auth.authToken);
+
+  const [categories, setCategories] = React.useState([]);
   const [selectedCategory, setSelectedCategory] = React.useState(null);
-  const [restaurants, setRestaurants] = React.useState(restaurantData);
+  const [restaurants, setRestaurants] = React.useState([]);
   const [currentLocation, setCurrentLocation] = React.useState(
     initialCurrentLocation,
   );
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`${baseUrl}/category`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setCategories(res.data.data)
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
+
+  const fetchRestaurants = async (long, lat) => {
+    try {
+      const res = await axios.get(`${baseUrl}/restaurant/listing?lat=${lat}&long=${long}`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setRestaurants(res.data.restaurants)
+    } catch (error) {
+      console.log("fetch res list ==>", error.response.data)
+    }
+  }
+
+  const fetchRestaurantsByCatID = async (catID) => {
+    try {
+      const res = await axios.get(`${baseUrl}/restaurant/getRestaurantbyCatID/${catID}`, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      setRestaurants(res.data.restaurants)
+    } catch (error) {
+      console.log("error by cat id ==>", error.response.data)
+      ToastAndroid.show(error.response.data.msg, ToastAndroid.SHORT)
+      setRestaurants([])
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 60000,
+    })
+      .then(location => {
+        console.log(location);
+        setCurrentLocation(prev => ({ ...prev, gps: { latitude: location.latitude, longitude: location.longitude } }))
+        fetchRestaurants(location.longitude, location.latitude)
+      })
+      .catch(error => {
+        const { code, message } = error;
+        console.warn(code, message);
+      })
+
+  }, [])
+
   function onSelectCategory(category) {
-    //filter restaurant
-    let restaurantList = restaurantData.filter(a =>
-      a.categories.includes(category.id),
-    );
 
-    setRestaurants(restaurantList);
+    if (selectedCategory?._id == category._id) {
+      setSelectedCategory(null);
+      fetchRestaurants(currentLocation.gps.longitude, currentLocation.gps.latitude)
+      return
+    }
 
+    fetchRestaurantsByCatID(category._id)
     setSelectedCategory(category);
+
   }
 
   function getCategoryNameById(id) {
-    let category = categories.filter(a => a.id == id);
+    let category = categories.filter(a => a._id == id);
 
     if (category.length > 0) return category[0].name;
 
@@ -360,7 +425,7 @@ const Home = ({navigation}) => {
 
   function renderHeader() {
     return (
-      <View style={{flexDirection: 'row', height: 50}}>
+      <View style={{ flexDirection: 'row', height: 50 }}>
         <TouchableOpacity
           style={{
             width: 50,
@@ -377,7 +442,7 @@ const Home = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <View
             style={{
               width: '70%',
@@ -387,7 +452,7 @@ const Home = ({navigation}) => {
               justifyContent: 'center',
               borderRadius: SIZES.radius,
             }}>
-            <Text style={{...FONTS.h3}}>{currentLocation.streetName}</Text>
+            <Text style={{ ...FONTS.h3 }}>{currentLocation.streetName}</Text>
           </View>
         </View>
 
@@ -411,14 +476,14 @@ const Home = ({navigation}) => {
   }
 
   function renderMainCategories() {
-    const renderItem = ({item}) => {
+    const renderItem = ({ item }) => {
       return (
         <TouchableOpacity
           style={{
             padding: SIZES.padding,
             paddingBottom: SIZES.padding * 2,
             backgroundColor:
-              selectedCategory?.id == item.id ? COLORS.primary : COLORS.white,
+              selectedCategory?._id == item._id ? COLORS.primary : COLORS.white,
             borderRadius: SIZES.radius,
             alignItems: 'center',
             justifyContent: 'center',
@@ -434,12 +499,12 @@ const Home = ({navigation}) => {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor:
-                selectedCategory?.id == item.id
+                selectedCategory?._id == item._id
                   ? COLORS.white
                   : COLORS.lightGray,
             }}>
             <Image
-              source={item.icon}
+              source={{ uri: item.media }}
               resizeMode="contain"
               style={{
                 width: 30,
@@ -452,7 +517,7 @@ const Home = ({navigation}) => {
             style={{
               marginTop: SIZES.padding,
               color:
-                selectedCategory?.id == item.id ? COLORS.white : COLORS.black,
+                selectedCategory?._id == item._id ? COLORS.white : COLORS.black,
               ...FONTS.body5,
             }}>
             {item.name}
@@ -462,30 +527,30 @@ const Home = ({navigation}) => {
     };
 
     return (
-      <View style={{padding: SIZES.padding * 2}}>
-        <Text style={{...FONTS.h1}}>Main</Text>
-        <Text style={{...FONTS.h1}}>Categories</Text>
+      <View style={{ padding: SIZES.padding * 2 }}>
+        <Text style={{ ...FONTS.h1 }}>Search by </Text>
+        <Text style={{ ...FONTS.h1 }}>Categories</Text>
 
         <FlatList
           data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={item => `${item.id}`}
+          keyExtractor={item => `${item._id}`}
           renderItem={renderItem}
-          contentContainerStyle={{paddingVertical: SIZES.padding * 2}}
+          contentContainerStyle={{ paddingVertical: SIZES.padding * 2 }}
         />
       </View>
     );
   }
 
   function renderRestaurantList() {
-    const renderItem = ({item}) => (
+    const renderItem = ({ item }) => (
       <TouchableOpacity
-        style={{marginBottom: SIZES.padding * 2}}
+        style={{ marginBottom: SIZES.padding * 2 }}
         onPress={() =>
           navigation.navigate('Restaurant', {
-            ...item,
-            currentLocation,
+            restaurantID: item._id,
+            location: currentLocation,
           })
         }>
         {/* Image */}
@@ -494,7 +559,7 @@ const Home = ({navigation}) => {
             marginBottom: SIZES.padding,
           }}>
           <Image
-            source={item.photo}
+            source={{ uri: item.logo }}
             resizeMode="cover"
             style={{
               width: '100%',
@@ -516,12 +581,12 @@ const Home = ({navigation}) => {
               justifyContent: 'center',
               ...styles.shadow,
             }}>
-            <Text style={{...FONTS.h4}}>{item.duration}</Text>
+            <Text style={{ ...FONTS.h4 }}>10 - 15 min</Text>
           </View>
         </View>
 
         {/* Restaurant Info */}
-        <Text style={{...FONTS.body2}}>{item.name}</Text>
+        <Text style={{ ...FONTS.body2 }}>{item.name}</Text>
 
         <View
           style={{
@@ -538,7 +603,7 @@ const Home = ({navigation}) => {
               marginRight: 10,
             }}
           />
-          <Text style={{...FONTS.body3}}>{item.rating}</Text>
+          <Text style={{ ...FONTS.body3 }}>4.1</Text>
 
           {/* Categories */}
           <View
@@ -546,19 +611,19 @@ const Home = ({navigation}) => {
               flexDirection: 'row',
               marginLeft: 10,
             }}>
-            {item.categories.map(categoryId => {
+            {item?.categories?.map(categoryId => {
               return (
-                <View style={{flexDirection: 'row'}} key={categoryId}>
-                  <Text style={{...FONTS.body3}}>
+                <View style={{ flexDirection: 'row' }} key={categoryId}>
+                  <Text style={{ ...FONTS.body3 }}>
                     {getCategoryNameById(categoryId)}
                   </Text>
-                  <Text style={{...FONTS.h3, color: COLORS.darkgray}}> . </Text>
+                  <Text style={{ ...FONTS.h3, color: COLORS.darkgray }}> . </Text>
                 </View>
               );
             })}
 
             {/* Price */}
-            {[1, 2, 3].map(priceRating => (
+            {/* {[1, 2, 3].map(priceRating => (
               <Text
                 key={priceRating}
                 style={{
@@ -570,7 +635,7 @@ const Home = ({navigation}) => {
                 }}>
                 $
               </Text>
-            ))}
+            ))} */}
           </View>
         </View>
       </TouchableOpacity>
@@ -579,7 +644,7 @@ const Home = ({navigation}) => {
     return (
       <FlatList
         data={restaurants}
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={item => `${item._id}`}
         renderItem={renderItem}
         contentContainerStyle={{
           paddingHorizontal: SIZES.padding * 2,
