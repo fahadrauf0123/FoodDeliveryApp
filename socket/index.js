@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { backendUrl } from '../env';
+import { socketUrl } from '../env';
 
-const socket = io(backendUrl);
+const socket = io(socketUrl);
 export default socket;

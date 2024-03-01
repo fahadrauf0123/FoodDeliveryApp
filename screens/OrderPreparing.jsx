@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, Text } from 'react-native';
 import { io } from 'socket.io-client';
-import { backendUrl } from '../env';
+import { socketUrl } from '../env';
 import { useSelector } from 'react-redux';
 
 const OrderPreparing = ({ route, navigation }) => {
@@ -10,7 +10,7 @@ const OrderPreparing = ({ route, navigation }) => {
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
-    const chatSocket = io(`${backendUrl}/?token=${authToken}`);
+    const chatSocket = io(`${socketUrl}/?token=${authToken}`);
     setSocket(chatSocket);
 
     chatSocket.emit(
