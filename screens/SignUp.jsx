@@ -25,7 +25,7 @@ const SignUp = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   const handleSignup = async () => {
-    if (!email || !password || !fullName || phoneNo)
+    if (!email || !password || !name || !contact)
       return ToastAndroid.show('Fields are required', ToastAndroid.SHORT);
     const body = {
       fullName: name,
